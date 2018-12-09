@@ -26,6 +26,8 @@ public class FieldInfoFactory {
     final ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.setSerializationInclusion(Include.NON_NULL);
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
+    objectMapper.configure(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS, false);
     objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     return objectMapper;
   }    
