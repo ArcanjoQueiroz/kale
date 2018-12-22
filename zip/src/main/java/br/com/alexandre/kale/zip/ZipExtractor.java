@@ -3,13 +3,14 @@ package br.com.alexandre.kale.zip;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.exists;
+import static java.nio.file.Files.isDirectory;
+import static java.nio.file.Files.isRegularFile;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -24,25 +25,30 @@ public class ZipExtractor {
   private static final int BUFFER_SIZE = 4096;
 
   public ZipExtractor(final Path zip) {
-    checkArgument(zip != null, "Zip File is null");
-    checkArgument(Files.exists(zip), "Zip File does not exist");
-    checkArgument(Files.isRegularFile(zip), "Zip File is not a file");
+    checkArgument(zip != null, "Invalid source file");
+    checkArgument(exists(zip), "Source file does not exist");
+    checkArgument(isRegularFile(zip), "Source is not a regular file");
     this.zip = zip;
   }
 
   public void extractTo(final Path path) {
+    checkArgument(path != null, "Invalid target directory");
+    checkArgument(exists(zip), "Target does not exist");
+    checkArgument(isDirectory(path), "Target is not a directory");
+    
     try (ZipInputStream is = new ZipInputStream(new BufferedInputStream(new FileInputStream(zip.toFile())))) {
       logger.debug("Extracting '{}' zip file", this.zip.toFile().getName());
       ZipEntry entry = null;
       while ((entry = is.getNextEntry()) != null) {
         final Path output = path.resolve(entry.getName());
-        if (!exists(output.getParent())) {
-          logger.debug("Creating directory: '{}'", output.getParent().toString());
-          createDirectories(output.getParent());
-        }
         if (!exists(output)) {
-          logger.debug("Creating file: '{}'", output.toString());
-          extractFile(is, new FileOutputStream(output.toFile()));
+          if (entry.isDirectory()) {
+            logger.debug("Creating directory: '{}'", output.toString());
+            createDirectories(output);
+          } else {
+            logger.debug("Creating file: '{}'", output.toString());
+            extractFile(is, new FileOutputStream(output.toFile()));
+          }
         }
       }
       logger.debug("Zip file '{}' extracted successfully", this.zip.toFile().getName());
