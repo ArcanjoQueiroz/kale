@@ -64,7 +64,7 @@ public class ZipWriter {
             logger.debug("Invoking write with subdirectory '{}' content", path.toString());
             write(zip, directoryPaths.toArray(param));
           } else {
-            logger.debug("There is not content to iterate");
+            logger.debug("There is no content to iterate");
           }
         } 
       }
