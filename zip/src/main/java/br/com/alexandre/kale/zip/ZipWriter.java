@@ -1,6 +1,5 @@
 package br.com.alexandre.kale.zip;
 
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.commons.compress.utils.IOUtils.copy;
 import java.io.FileInputStream;
