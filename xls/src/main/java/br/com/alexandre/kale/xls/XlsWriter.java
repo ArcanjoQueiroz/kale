@@ -1,5 +1,6 @@
 package br.com.alexandre.kale.xls;
 
+import static br.com.alexandre.kale.xls.CellFactory.createCell;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.nio.file.Files.exists;
 import java.io.FileOutputStream;
@@ -7,31 +8,25 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.DataFormat;
 
 public class XlsWriter {
 
-  private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
-  private static final String EMPTY_VALUE = "";
-  
   private Path path;
   private String sheetName;
   private boolean autoSize;
-  private String dateFormat;
 
   private Logger logger = LoggerFactory.getLogger(XlsWriter.class);
 
   public XlsWriter(final Path path) {
     this.setPath(path);
     this.autoSize = true;
-    this.setDateFormat(DEFAULT_DATE_FORMAT);
   }
 
   public XlsWriter(final Path path, final String sheetName) {
@@ -48,14 +43,16 @@ public class XlsWriter {
       int lastColumnNumber = 0;
       int rowNumber = 0;
       if (!rows.isEmpty()) {
-        for (final Object[] row : rows) {
+        for (final Object[] cells : rows) {
           logger.debug("Writing row: '{}'", rowNumber);
-          final org.apache.poi.ss.usermodel.Row ro = sheet.createRow(rowNumber++);
+          final Row ro = sheet.createRow(rowNumber++);
           int cellNumber = 0;
-          if (row != null && row.length > 0) {
+          if (cells != null && cells.length > 0) {
             logger.debug("Writing cell: '{}'", cellNumber);
-            for (final Object value : row) {
-              createCell(value, cellNumber++, ro, workbook);
+            for (final Object cell : cells) {
+              createCell(workbook, ro, cellNumber, cell);
+              logger.debug("Writing '{}' value into cell", cell.getClass().getSimpleName(), cellNumber);
+              cellNumber++;
             }
             if (cellNumber > lastColumnNumber) {
               lastColumnNumber = cellNumber;
@@ -82,42 +79,8 @@ public class XlsWriter {
 
   }
 
-  private org.apache.poi.ss.usermodel.Cell createCell(final Object value, final int number, final org.apache.poi.ss.usermodel.Row row, final Workbook workbook) {
-    final org.apache.poi.ss.usermodel.Cell cell = row.createCell(number);
-    if (value == null) {
-      cell.setCellValue(EMPTY_VALUE);      
-      logger.debug("Writing null value into cell: '{}'", number);
-    } else {
-      if (value instanceof java.util.Date) {
-        cell.setCellValue((java.util.Date) value);
-        cell.setCellStyle(createDateCellStyle(workbook, this.dateFormat));
-      } else if (value instanceof Boolean) {
-        cell.setCellValue((Boolean) value);
-      } else if (value instanceof Number) {
-        cell.setCellValue(((Number) value).doubleValue());
-      } else {
-        cell.setCellValue(value.toString());
-      }
-      logger.debug("Writing '{}' value into cell: '{}'", value.getClass().getSimpleName(), number);
-    }
-    return cell;
-  }
-
-  private CellStyle createDateCellStyle(final Workbook workbook, final String dateFormat) {
-    final CellStyle cellStyle = workbook.createCellStyle();
-    final DataFormat dataFormat = workbook.createDataFormat();
-    final short df = dataFormat.getFormat(dateFormat);
-    cellStyle.setDataFormat(df);
-    return cellStyle;
-  }
-
   public void setAutoSize(boolean autoSize) {
     this.autoSize = autoSize;
-  }
-
-  public void setDateFormat(String dateFormat) {
-    checkArgument(!Strings.isNullOrEmpty(dateFormat), "Date format be different from null or empty");
-    this.dateFormat = dateFormat;
   }
 
   private void setSheetName(final String sheetName) {

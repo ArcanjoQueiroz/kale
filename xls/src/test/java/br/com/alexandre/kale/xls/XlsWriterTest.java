@@ -8,6 +8,9 @@ import static java.nio.file.Files.isRegularFile;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Date;
 import org.junit.Test;
@@ -70,7 +73,7 @@ public class XlsWriterTest {
         new Object[] { 3.0 , "Gabriela" },
         new Object[] { 4.0 , "Felipe" },
         new Object[] { 5.0 , "Thiago" }
-    ));
+    ));    
     assertTrue(exists(path) && isRegularFile(path));
   }
 
@@ -79,5 +82,19 @@ public class XlsWriterTest {
     final Path path = Paths.get(String.format("./target/file-%s-write-method.xls", new SimpleDateFormat("ddMMyyyyhhmmss").format(new Date())));
     new XlsWriter(path);
     assertFalse(exists(path));
+  }
+  
+  @Test
+  public void shouldUseLocalDate() {
+    final Path path = Paths.get(String.format("./target/file-%s-localdate.xls", new SimpleDateFormat("ddMMyyyyhhmmss").format(new Date())));
+    assertFalse(exists(path));
+
+    final XlsWriter writer = new XlsWriter(path);
+    writer.write(Arrays.asList(
+        new Object[] { 1 , "Alexandre", LocalDate.of(2019, 1, 1) },
+        new Object[] { 2 , "Camila", LocalDateTime.of(2018, 12, 31, 10, 10, 20) },
+        new Object[] { 3 , "Gabriela", LocalTime.of(10, 10, 20) }
+    ));
+    assertTrue(exists(path) && isRegularFile(path));
   }
 }
