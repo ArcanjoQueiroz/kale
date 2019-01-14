@@ -74,7 +74,7 @@ public class XlsWriter {
       workbook.write(fileOutputStream);
       logger.debug("Writing process finished successfully. File: '{}'", this.path.toAbsolutePath().toString());
     } catch (final IOException e) {
-      throw new RuntimeException("Error on Write Excel file: " + e.getMessage(), e);
+      throw new RuntimeException("Error on Write Excel File: " + e.getMessage(), e);
     }
 
   }
@@ -91,7 +91,9 @@ public class XlsWriter {
   private void setPath(final Path path) {
     checkArgument(path != null, "Destination file is null");
     checkArgument(!exists(path), "Destination file exists: " + path.getFileName().toString());
-    checkArgument(path.getFileName().toString().endsWith(".xls") || path.getFileName().toString().endsWith(".xlsx"), "Destination file is not a XLS or XLSX file: " +  path.getFileName().toString());
+    checkArgument(path.getFileName().toString().toLowerCase().endsWith(".xls") || 
+                  path.getFileName().toString().toLowerCase().endsWith(".xlsx"), 
+                  "Destination file is not a XLS or XLSX file: " +  path.getFileName().toString());
     this.path = path;
   }
 
