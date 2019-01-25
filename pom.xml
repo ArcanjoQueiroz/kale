@@ -89,6 +89,12 @@
 				<version>1.7.25</version>
 				<scope>test</scope>
 			</dependency>
+			<dependency>
+				<groupId>com.opencsv</groupId>
+				<artifactId>opencsv</artifactId>
+				<version>4.4</version>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 	<build>
@@ -113,5 +119,6 @@
 		<module>zip</module>
 		<module>lang</module>
 		<module>docx</module>
+		<module>csv</module>
 	</modules>
 </project>
