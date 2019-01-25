@@ -22,11 +22,11 @@ public class DocxGeneratorTest {
   
   @Test
   public void shouldCreateAdocxFromTemplate() throws IOException, Exception {
-    try (OutputStream outputStream = this.generator.fromTemplate(Resources.getResource("docx/template.docx").openStream(), ImmutableMap.of("name", "Alexandre"))) {
-      final File file = new File("target/birthday.docx");
+    final File file = new File("target/birthday.docx");
+    try (final OutputStream outputStream = this.generator.fromTemplate(Resources.getResource("docx/template.docx").openStream(), ImmutableMap.of("name", "Alexandre"))) {
       Files.write(((ByteArrayOutputStream) outputStream).toByteArray(), file);
-      assertThat(file).exists();
     }
+    assertThat(file).exists();
   }
 
 }

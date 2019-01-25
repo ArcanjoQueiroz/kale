@@ -1,5 +1,6 @@
 package br.com.alexandre.kale.docx;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,6 +19,7 @@ public class DocxAppenderTest {
         .add(Resources.getResource("docx/fileThree.docx").openStream())
         .append();
     }
+    assertThat(file).exists();
   }
 
 }
