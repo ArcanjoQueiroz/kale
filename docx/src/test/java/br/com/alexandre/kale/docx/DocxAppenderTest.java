@@ -14,9 +14,9 @@ public class DocxAppenderTest {
     final File file = new File("target/out.docx");
     try (final DocxAppender appender = new DocxAppender(new FileOutputStream(file))) {
       appender
-        .add(Resources.getResource("docx/fileOne.docx").openStream())
-        .add(Resources.getResource("docx/fileTwo.docx").openStream())
-        .add(Resources.getResource("docx/fileThree.docx").openStream())
+        .add(new File(Resources.getResource("docx/fileOne.docx").getFile()))
+        .add(new File(Resources.getResource("docx/fileTwo.docx").getFile()))
+        .add(new File(Resources.getResource("docx/fileThree.docx").getFile()))
         .append();
     }
     assertThat(file).exists();

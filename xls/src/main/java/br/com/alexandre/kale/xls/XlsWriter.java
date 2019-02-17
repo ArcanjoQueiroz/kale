@@ -2,10 +2,12 @@ package br.com.alexandre.kale.xls;
 
 import static br.com.alexandre.kale.xls.CellFactory.createCell;
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.nio.file.Files.exists;
+import java.io.Closeable;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Path;
+import java.io.OutputStream;
+import static java.util.Arrays.asList;
 import java.util.List;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
@@ -16,32 +18,40 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 
-public class XlsWriter {
+public class XlsWriter implements Closeable {
 
-  private Path path;
-  private String sheetName;
   private boolean autoSize;
+  private Workbook workbook;
+  private Sheet sheet;
+  private OutputStream outputStream;
+  private int rowNumber;
 
   private Logger logger = LoggerFactory.getLogger(XlsWriter.class);
 
-  public XlsWriter(final Path path) {
-    this.setPath(path);
+  public XlsWriter(final File file, final String sheetName) throws IOException {
+    checkArgument(file != null, "File is null");
+    final String extension = getExtension(file);
+    checkArgument(asList("xls", "xlsx").contains(extension), "File is not a regular Excel file");    
     this.autoSize = true;
+    this.outputStream = new FileOutputStream(file);
+    this.workbook = "xls".equalsIgnoreCase(extension) ? new HSSFWorkbook() : new XSSFWorkbook();
+    this.sheet = Strings.isNullOrEmpty(sheetName) ? workbook.createSheet(): workbook.createSheet(sheetName);
+    this.rowNumber = 0;
   }
 
-  public XlsWriter(final Path path, final String sheetName) {
-    this(path);
-    this.setSheetName(sheetName);
+  private String getExtension(final File file) {
+    final String[] strings = file.getName().split("\\.");
+    return (strings.length > 1) ? Strings.nullToEmpty(strings[strings.length - 1]).toLowerCase(): null; 
+  }
+
+  public XlsWriter(final File file) throws IOException {
+    this(file, null);
   }
 
   public void write(final List<Object[]> rows) {
-    checkArgument(rows != null, "Rows is null");
-    try (final Workbook workbook = path.getFileName().endsWith(".xls") ? new HSSFWorkbook() : new XSSFWorkbook();
-        final FileOutputStream fileOutputStream = new FileOutputStream(path.toAbsolutePath().toString())) {
-      logger.debug("Starting writing process. File: '{}'", this.path.toAbsolutePath().toString());
-      final Sheet sheet = Strings.isNullOrEmpty(sheetName) ? workbook.createSheet(): workbook.createSheet(sheetName);
+    if (rows != null) {
+      logger.debug("Starting writing process.");
       int lastColumnNumber = 0;
-      int rowNumber = 0;
       if (!rows.isEmpty()) {
         for (final Object[] cells : rows) {
           logger.debug("Writing row: '{}'", rowNumber);
@@ -70,31 +80,22 @@ public class XlsWriter {
           sheet.autoSizeColumn(i, true);
         }
       }
-      logger.debug("Writing to output stream");
-      workbook.write(fileOutputStream);
-      logger.debug("Writing process finished successfully. File: '{}'", this.path.toAbsolutePath().toString());
-    } catch (final IOException e) {
-      throw new RuntimeException("Error on Write Excel File: " + e.getMessage(), e);
     }
-
   }
 
   public void setAutoSize(boolean autoSize) {
     this.autoSize = autoSize;
   }
 
-  private void setSheetName(final String sheetName) {
-    checkArgument(!Strings.isNullOrEmpty(sheetName), "Sheet name must be different from null or empty");
-    this.sheetName = sheetName;
-  }
-
-  private void setPath(final Path path) {
-    checkArgument(path != null, "Destination file is null");
-    checkArgument(!exists(path), "Destination file exists: " + path.getFileName().toString());
-    checkArgument(path.getFileName().toString().toLowerCase().endsWith(".xls") || 
-                  path.getFileName().toString().toLowerCase().endsWith(".xlsx"), 
-                  "Destination file is not a XLS or XLSX file: " +  path.getFileName().toString());
-    this.path = path;
+  @Override
+  public void close() throws IOException {        
+    logger.debug("Writing to output stream");
+    try {
+      workbook.write(outputStream);
+    } catch (final IOException e) {
+      throw new RuntimeException(e);
+    }
+    workbook.close();
   }
 
 }

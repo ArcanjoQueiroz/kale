@@ -1,27 +1,28 @@
 package br.com.alexandre.kale.docx;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
 
 public class DocxAppender implements Closeable {
 
   private OutputStream output;
-  private List<InputStream> inputs;
+  private List<File> inputs;
   private XWPFDocument root;
   private boolean closed;
-  
+
   private Logger logger = LoggerFactory.getLogger(DocxAppender.class);
 
   public DocxAppender(final OutputStream output) {
@@ -31,27 +32,29 @@ public class DocxAppender implements Closeable {
     this.closed = false;
   }
 
-  public DocxAppender add(final InputStream input) throws IOException, InvalidFormatException {
+  public DocxAppender add(final File input) {
     checkArgument(input != null, "Invalid input");
     checkState(!this.closed, "Appender is already closed");
     inputs.add(input);
-    final OPCPackage opcPackage = OPCPackage.open(input);
-    final XWPFDocument docx = new XWPFDocument(opcPackage);
-    logger.debug("Append document body");
-    if(inputs.size() == 1) {
-      root = docx;
-    } else {
-      final CTBody body = docx.getDocument().getBody();
-      root.getDocument().addNewBody().set(body);            
-    }
     return this;
   }
-  
+
   public void append() throws IOException {
-    logger.debug("Writing output");
-    root.write(output);
-    logger.debug("Flushing results");
-    output.flush();
+    if (inputs.size() > 0) {
+      try (final XWPFDocument left = new XWPFDocument(OPCPackage.open(inputs.get(0)))) {
+        root = left;
+        if (inputs.size() > 1) {
+          for (int i = 1; i < inputs.size(); i++) {
+            try (final XWPFDocument right = new XWPFDocument(OPCPackage.open(inputs.get(i)))) {
+              root.getDocument().addNewBody().set(right.getDocument().getBody());                        
+            }
+          }
+        }
+        root.write(output);
+      } catch (InvalidFormatException e) {
+        throw new RuntimeException(e);
+      }
+    }
   }
 
   @Override
@@ -61,13 +64,6 @@ public class DocxAppender implements Closeable {
       output.close();
     } catch (final RuntimeException e) {
       logger.info("Error on close OutputStream: ", e);
-    }
-    for (final InputStream input: inputs) {      
-      try {
-        input.close();
-      } catch (final RuntimeException e) {
-        logger.info("Error on close InputStream: ", e);
-      }
     }
     this.closed = true;
   }

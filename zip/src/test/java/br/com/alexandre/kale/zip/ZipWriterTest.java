@@ -1,10 +1,9 @@
 package br.com.alexandre.kale.zip;
 
-import static java.nio.file.Files.exists;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.junit.Test;
@@ -12,61 +11,66 @@ import org.junit.Test;
 public class ZipWriterTest {
 
   @Test(expected=IllegalArgumentException.class)
-  public void shouldThrowAndIllegalArgumentExceptionIfFileIsNull() {
-    final ZipWriter writer = new ZipWriter(null);
-    writer.write();
+  public void shouldThrowAndIllegalArgumentExceptionIfFileIsNull() throws IOException {
+    try (final ZipWriter writer = new ZipWriter(null)) {
+      writer.write();
+    }
   }
 
   @Test(expected=IllegalArgumentException.class)
-  public void shouldThrowAnIllegalArgumentExceptionIfFileIsAdirectory() {
-    final ZipWriter writer = new ZipWriter(Paths.get("src/test/resources"));
-    writer.write();
+  public void shouldThrowAnIllegalArgumentExceptionIfFileIsAdirectory() throws IOException {
+    try(final ZipWriter writer = new ZipWriter(new File("src/test/resources"))) {
+      writer.write();
+    }
   }
 
   @Test
-  public void shouldCreateAzipFileUsingTheTestFiles() {
+  public void shouldCreateAzipFileUsingTheTestFiles() throws IOException {
     final String fileName = String.format("target/my-zip-created-at-%s-with-more-than-one-file.zip", 
         new SimpleDateFormat("ddMMyyyyhhmmss").format(new Date()));
 
-    final Path destination = Paths.get(fileName);
+    final File destination = new File(fileName);
 
-    assertFalse(exists(destination));
+    assertFalse(destination.exists());
 
-    final ZipWriter writer = new ZipWriter(destination);
-    writer.write(Paths.get("src/test/resources/customers.xls"),
-        Paths.get("src/test/resources/dummy.txt"), 
-        Paths.get("src/test/resources/empty.xls"));
+    try (final ZipWriter writer = new ZipWriter(destination)) {
+      writer.write(new File("src/test/resources/customers.xls"),
+          new File("src/test/resources/dummy.txt"), 
+          new File("src/test/resources/empty.xls"));
+    }
 
-    assertTrue(exists(destination));
+    assertTrue(destination.exists());
   }
 
   @Test
-  public void shouldCreateAzipFileWithOnlyOneFile() {
+  public void shouldCreateAzipFileWithOnlyOneFile() throws IOException {
     final String fileName = String.format("target/my-zip-created-at-%s-with-one-file.zip", 
         new SimpleDateFormat("ddMMyyyyhhmmss").format(new Date()));
 
-    final Path destination = Paths.get(fileName);
+    final File destination = new File(fileName);
 
-    assertFalse(exists(destination));
+    assertFalse(destination.exists());
 
-    final ZipWriter writer = new ZipWriter(destination);
-    writer.write(Paths.get("src/test/resources/customers.xls"));
+    try (final ZipWriter writer = new ZipWriter(destination)) {
+      writer.write(new File("src/test/resources/customers.xls"));
+    }
 
-    assertTrue(exists(destination));
+    assertTrue(destination.exists());
   }
-  
+
   @Test
-  public void shouldCreateAzipFileWithAdirectory() {
+  public void shouldCreateAzipFileWithAdirectory() throws IOException {
     final String fileName = String.format("target/my-zip-created-at-%s-with-a-directory.zip", 
         new SimpleDateFormat("ddMMyyyyhhmmss").format(new Date()));
 
-    final Path destination = Paths.get(fileName);
+    final File destination = new File(fileName);
 
-    assertFalse(exists(destination));
+    assertFalse(destination.exists());
 
-    final ZipWriter writer = new ZipWriter(destination);
-    writer.write(Paths.get("src/test/resources"));
+    try (final ZipWriter writer = new ZipWriter(destination)) {
+      writer.write(new File("src/test/resources"));
+    }
 
-    assertTrue(exists(destination));
+    assertTrue(destination.exists());
   }
 }
