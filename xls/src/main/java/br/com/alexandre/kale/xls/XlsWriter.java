@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import static java.util.Arrays.asList;
 import java.util.List;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
@@ -28,24 +27,25 @@ public class XlsWriter implements Closeable {
 
   private Logger logger = LoggerFactory.getLogger(XlsWriter.class);
 
-  public XlsWriter(final File file, final String sheetName) throws IOException {
-    checkArgument(file != null, "File is null");
-    final String extension = getExtension(file);
-    checkArgument(asList("xls", "xlsx").contains(extension), "File is not a regular Excel file");    
-    this.autoSize = true;
-    this.outputStream = new FileOutputStream(file);
-    this.workbook = "xls".equalsIgnoreCase(extension) ? new HSSFWorkbook() : new XSSFWorkbook();
-    this.sheet = Strings.isNullOrEmpty(sheetName) ? workbook.createSheet(): workbook.createSheet(sheetName);
-    this.rowNumber = 0;
+  public XlsWriter(final OutputStream outputStream, final Format format) {
+    this(outputStream, format, null);
   }
 
-  private String getExtension(final File file) {
-    final String[] strings = file.getName().split("\\.");
-    return (strings.length > 1) ? Strings.nullToEmpty(strings[strings.length - 1]).toLowerCase(): null; 
+  public XlsWriter(final File file, final Format format, final String sheetName) throws IOException {
+    this(new FileOutputStream(file), format, sheetName);
   }
 
   public XlsWriter(final File file) throws IOException {
-    this(file, null);
+    this(file, Format.XLSX, null);
+  }
+
+  public XlsWriter(final OutputStream outputStream, final Format format, final String sheetName) {
+    checkArgument(outputStream != null, "OutputStream is null");        
+    this.autoSize = true;
+    this.outputStream = outputStream;
+    this.workbook = (format == Format.XLS) ? new HSSFWorkbook() : new XSSFWorkbook();
+    this.sheet = Strings.isNullOrEmpty(sheetName) ? workbook.createSheet(): workbook.createSheet(sheetName);
+    this.rowNumber = 0;
   }
 
   public void write(final List<Object[]> rows) {

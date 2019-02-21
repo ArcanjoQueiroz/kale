@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,25 +27,38 @@ import org.slf4j.LoggerFactory;
 
 public class ZipWriter implements Closeable {
 
-  private final File destination;
+  private final OutputStream destination;
   private final ArchiveOutputStream zip;
 
   private final Logger logger = LoggerFactory.getLogger(ZipWriter.class);
 
-  public ZipWriter(final File destination) {
-    checkArgument(destination != null, "Destination file is null");
-    checkArgument(!destination.exists(), "Destination file exists");
+  public ZipWriter(final OutputStream destination) {
+    checkArgument(destination != null, "Destination is null");
     this.destination = destination;
+    this.zip = createZipOutputStream(this.destination);        
+  }
+
+  public ZipWriter(final File file) {
+    checkArgument(file != null, "Destination file is null");
+    checkArgument(!file.exists(), "Destination file exists");
     try {
-      this.zip = new ArchiveStreamFactory().createArchiveOutputStream(ArchiveStreamFactory.ZIP, new FileOutputStream(destination));
-    } catch (FileNotFoundException | ArchiveException e) {
+      this.destination = new FileOutputStream(file);
+    } catch (final FileNotFoundException e) {
       throw new IllegalArgumentException(e);
-    }        
+    }
+    this.zip = createZipOutputStream(this.destination);       
+  }
+
+  private ArchiveOutputStream createZipOutputStream(OutputStream out) {
+    try {
+      return new ArchiveStreamFactory().createArchiveOutputStream(ArchiveStreamFactory.ZIP, out);
+    } catch (final ArchiveException e) {
+      throw new IllegalArgumentException(e);
+    }
   }
 
   public void write(final File...paths) {
     checkArgument(paths != null && paths.length > 0, "There is no input resources");
-    logger.debug("Creating '{}' zip file", this.destination.getName().toString());
     try {
       write(zip, paths);
     } catch (IOException e) {
@@ -53,7 +67,6 @@ public class ZipWriter implements Closeable {
   }
 
   public void finish() throws IOException {
-    logger.debug("Zip file '{}' finished successfully", this.destination.getName().toString());
     zip.finish();
   }
 
@@ -84,7 +97,6 @@ public class ZipWriter implements Closeable {
 
   @Override
   public void close() throws IOException {     
-    logger.debug("Closing Zip file '{}'...", this.destination.getName().toString());
     this.zip.close();        
   }
 }

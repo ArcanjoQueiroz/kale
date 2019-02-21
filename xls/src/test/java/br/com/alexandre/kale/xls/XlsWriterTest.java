@@ -14,14 +14,6 @@ import org.junit.Test;
 
 public class XlsWriterTest {
 
-  @Test(expected=IllegalArgumentException.class)
-  public void shouldThrowAnIllegalArgumentExceptionIfFileIsNull() throws IOException {
-    final File file = null;
-    try (final XlsWriter writer = new XlsWriter(file)) {
-      writer.write(null);
-    }
-  }
-
   @Test()
   public void shouldCreateAnEmptyFileIsContentIsEmpty() throws IOException {
     final File file = new File(String.format("./target/file-%s.xls", new SimpleDateFormat("ddMMyyyyhhmmss").format(new Date())));
@@ -29,12 +21,6 @@ public class XlsWriterTest {
       writer.write(Arrays.asList());
     }
     assertTrue(file.exists() && file.isFile());
-  }
-
-  @Test(expected=IllegalArgumentException.class)
-  public void shouldThrowAnIllegalArgumentExceptionIfDestinationFileIsNotAnExcelFile() throws IOException {
-    final File file = new File(String.format("./target/file-%s.txt", new SimpleDateFormat("ddMMyyyyhhmmss").format(new Date())));
-    try (final XlsWriter writer = new XlsWriter(file)) { }
   }
 
   @SuppressWarnings("deprecation")

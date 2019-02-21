@@ -59,12 +59,13 @@ public class XlsReader {
     return list;
   }
 
+  @SuppressWarnings("deprecation")
   private Object[] getCells(final Row row) {
     final List<Object> cells = new ArrayList<>();
     final Iterator<Cell> cellIterator = row.cellIterator();
     while (cellIterator.hasNext()) {
       final Cell cell = cellIterator.next();
-      switch(cell.getCellType()) {
+      switch(cell.getCellTypeEnum()) {
         case BOOLEAN: {
           cells.add(cell.getBooleanCellValue()); 
           break;

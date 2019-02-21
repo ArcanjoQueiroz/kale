@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.junit.Test;
@@ -12,7 +13,8 @@ public class ZipWriterTest {
 
   @Test(expected=IllegalArgumentException.class)
   public void shouldThrowAndIllegalArgumentExceptionIfFileIsNull() throws IOException {
-    try (final ZipWriter writer = new ZipWriter(null)) {
+    final OutputStream outputStream = null;
+    try (final ZipWriter writer = new ZipWriter(outputStream)) {
       writer.write();
     }
   }
