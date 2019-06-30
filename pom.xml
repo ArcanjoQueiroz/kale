@@ -6,7 +6,7 @@
 
 	<groupId>br.com.alexandre</groupId>
 	<artifactId>kale</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Kale</name>
@@ -37,6 +37,11 @@
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-compress</artifactId>
 				<version>1.18</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-email</artifactId>
+				<version>1.5</version>
 			</dependency>
 
 			<!-- Google -->
@@ -159,5 +164,6 @@
 		<module>lang</module>
 		<module>csv</module>
 		<module>pdf</module>
+		<module>email</module>
 	</modules>
 </project>
