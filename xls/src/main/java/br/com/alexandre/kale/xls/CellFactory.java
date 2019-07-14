@@ -7,7 +7,6 @@ import java.time.ZoneId;
 import java.util.Date;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -40,28 +39,24 @@ class CellFactory {
 
   public static Cell createCell(final Workbook workbook, final Row row, final int number) {
     final Cell cell = row.createCell(number);
-    cell.setCellType(CellType.BOOLEAN);
     return cell;
   }
 
   public static Cell createCell(final Workbook workbook, final Row row, final int number, final String value) {
     final Cell cell = row.createCell(number);
     cell.setCellValue(value.toString().trim());
-    cell.setCellType(CellType.STRING);
     return cell;
   }
 
   public static Cell createCell(final Workbook workbook, final Row row, final int number, final Boolean value) {
     final Cell cell = row.createCell(number);
     cell.setCellValue((Boolean) value);
-    cell.setCellType(CellType.BOOLEAN);
     return cell;
   }
 
   public static Cell createCell(final Workbook workbook, final Row row, final int number, final Number value) {
     final Cell cell = row.createCell(number);
     cell.setCellValue(((Number) value).doubleValue());
-    cell.setCellType(CellType.NUMERIC);
     return cell;
   }
 

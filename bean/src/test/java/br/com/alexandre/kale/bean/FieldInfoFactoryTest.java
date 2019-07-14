@@ -33,6 +33,7 @@ public class FieldInfoFactoryTest {
 
       public MyBean() { }
 
+      @SuppressWarnings("unused")
       public Long getId() {
         return id;
       }
@@ -41,6 +42,7 @@ public class FieldInfoFactoryTest {
         this.id = id;
       }
 
+      @SuppressWarnings("unused")
       public String getName() {
         return name;
       }
@@ -49,6 +51,7 @@ public class FieldInfoFactoryTest {
         this.name = name;
       }
 
+      @SuppressWarnings("unused")
       public Character getSex() {
         return sex;
       }
@@ -57,10 +60,12 @@ public class FieldInfoFactoryTest {
         this.sex = sex;
       }
 
+      @SuppressWarnings("unused")
       public Date getBirth() {
         return birth;
       }
 
+      @SuppressWarnings("unused")
       public void setBirth(Date birth) {
         this.birth = birth;
       }
