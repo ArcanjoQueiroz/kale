@@ -3,6 +3,9 @@ package br.com.alexandre.kale.xls;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isRegularFile;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -18,8 +21,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 
 public class XlsReader {
 
@@ -27,7 +28,7 @@ public class XlsReader {
   private String sheetName;
 
   private Logger logger = LoggerFactory.getLogger(XlsReader.class);
-  
+
   public XlsReader(final Path path) {
     setPath(path);
   }
@@ -40,9 +41,12 @@ public class XlsReader {
   public List<Object[]> read() {
     logger.debug("Starting reading process. File: '{}'", this.path.toAbsolutePath().toString());
     final List<Object[]> list = new ArrayList<Object[]>();
-    try (final Workbook workbook = this.path.getFileName().toString().toLowerCase().endsWith(".xls") ? new HSSFWorkbook() : new XSSFWorkbook();
+    try (final Workbook workbook =
+        this.path.getFileName().toString().toLowerCase().endsWith(".xls") ? new HSSFWorkbook()
+            : new XSSFWorkbook();
         final FileInputStream fileInputStream = new FileInputStream(this.path.toFile())) {
-      final Sheet sheet = (Strings.isNullOrEmpty(sheetName)) ? workbook.getSheetAt(0): workbook.getSheet(sheetName);
+      final Sheet sheet = (Strings.isNullOrEmpty(sheetName)) ? workbook.getSheetAt(0)
+          : workbook.getSheet(sheetName);
       final Iterator<Row> iterator = sheet.iterator();
       while (iterator.hasNext()) {
         final Row row = iterator.next();
@@ -55,7 +59,8 @@ public class XlsReader {
     } catch (final IOException e) {
       throw new RuntimeException("Error on Read Excel File: " + e.getMessage(), e);
     }
-    logger.info("Read '{}' rows from file: '{}'", list.size(), this.path.toAbsolutePath().toString());
+    logger.info(
+        "Read '{}' rows from file: '{}'", list.size(), this.path.toAbsolutePath().toString());
     return list;
   }
 
@@ -65,13 +70,13 @@ public class XlsReader {
     final Iterator<Cell> cellIterator = row.cellIterator();
     while (cellIterator.hasNext()) {
       final Cell cell = cellIterator.next();
-      switch(cell.getCellTypeEnum()) {
+      switch (cell.getCellTypeEnum()) {
         case BOOLEAN: {
-          cells.add(cell.getBooleanCellValue()); 
+          cells.add(cell.getBooleanCellValue());
           break;
         }
         case STRING: {
-          cells.add(cell.getStringCellValue()); 
+          cells.add(cell.getStringCellValue());
           break;
         }
         case NUMERIC: {
@@ -87,8 +92,8 @@ public class XlsReader {
           break;
         }
         default:
-          break;                       
-      }      
+          break;
+      }
     }
     return cells.stream().toArray(Object[]::new);
   }
@@ -97,14 +102,16 @@ public class XlsReader {
     checkArgument(path != null, "Source is null");
     checkArgument(exists(path), "Source file does not exist");
     checkArgument(isRegularFile(path), "File is not a regular file");
-    checkArgument(path.getFileName().toString().toLowerCase().endsWith(".xls") || 
-        path.getFileName().toString().toLowerCase().endsWith(".xlsx"), 
-        "Source file is not a XLS or XLSX file: " +  path.getFileName().toString());
+    checkArgument(
+        path.getFileName().toString().toLowerCase().endsWith(".xls")
+        || path.getFileName().toString().toLowerCase().endsWith(".xlsx"),
+        "Source file is not a XLS or XLSX file: " + path.getFileName().toString());
     this.path = path;
   }
-  
+
   private void setSheetName(final String sheetName) {
-    checkArgument(!Strings.isNullOrEmpty(sheetName), "Sheet name must be different from null or empty");
+    checkArgument(
+        !Strings.isNullOrEmpty(sheetName), "Sheet name must be different from null or empty");
     this.sheetName = sheetName;
   }
 }

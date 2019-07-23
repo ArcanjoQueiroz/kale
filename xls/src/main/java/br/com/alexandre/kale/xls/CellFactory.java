@@ -12,12 +12,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 
 class CellFactory {
-  
+
   private static final String DEFAULT_DATE_TIME_FORMAT = "dd/MM/yyyy hh:mm:ss";
   private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
   private static final String DEFAULT_TIME_FORMAT = "hh:mm:ss";
 
-  public static Cell createCell(final Workbook workbook, final Row row, final int number, final Object value) {
+  public static Cell createCell(
+      final Workbook workbook, final Row row, final int number, final Object value) {
     if (value == null) {
       return createCell(workbook, row, number);
     } else if (value instanceof Date) {
@@ -42,44 +43,59 @@ class CellFactory {
     return cell;
   }
 
-  public static Cell createCell(final Workbook workbook, final Row row, final int number, final String value) {
+  public static Cell createCell(
+      final Workbook workbook, final Row row, final int number, final String value) {
     final Cell cell = row.createCell(number);
     cell.setCellValue(value.toString().trim());
     return cell;
   }
 
-  public static Cell createCell(final Workbook workbook, final Row row, final int number, final Boolean value) {
+  public static Cell createCell(
+      final Workbook workbook, final Row row, final int number, final Boolean value) {
     final Cell cell = row.createCell(number);
     cell.setCellValue((Boolean) value);
     return cell;
   }
 
-  public static Cell createCell(final Workbook workbook, final Row row, final int number, final Number value) {
+  public static Cell createCell(
+      final Workbook workbook, final Row row, final int number, final Number value) {
     final Cell cell = row.createCell(number);
     cell.setCellValue(((Number) value).doubleValue());
     return cell;
   }
 
-  public static Cell createCell(final Workbook workbook, final Row row, final int number, final LocalDateTime value) {
+  public static Cell createCell(
+      final Workbook workbook, final Row row, final int number, final LocalDateTime value) {
     final Date date = Date.from(((LocalDateTime) value).atZone(ZoneId.systemDefault()).toInstant());
     return createCell(workbook, row, number, date, DEFAULT_DATE_TIME_FORMAT);
   }
 
-  public static Cell createCell(final Workbook workbook, final Row row, final int number, final LocalDate value) {
-    final Date date = Date.from(((LocalDate) value).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+  public static Cell createCell(
+      final Workbook workbook, final Row row, final int number, final LocalDate value) {
+    final Date date =
+        Date.from(((LocalDate) value).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
     return createCell(workbook, row, number, date, DEFAULT_DATE_FORMAT);
   }
 
-  public static Cell createCell(final Workbook workbook, final Row row, final int number, final LocalTime value) {
-    final Date date = Date.from(((LocalTime) value).atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
+  public static Cell createCell(
+      final Workbook workbook, final Row row, final int number, final LocalTime value) {
+    final Date date =
+        Date.from(
+            ((LocalTime) value).atDate(LocalDate.now()).atZone(ZoneId.systemDefault()).toInstant());
     return createCell(workbook, row, number, date, DEFAULT_TIME_FORMAT);
   }
 
-  public static Cell createCell(final Workbook workbook, final Row row, final int number, final Date value) {
+  public static Cell createCell(
+      final Workbook workbook, final Row row, final int number, final Date value) {
     return createCell(workbook, row, number, value, DEFAULT_DATE_FORMAT);
   }
 
-  public static Cell createCell(final Workbook workbook, final Row row, final int number, final Date value, final String format) {
+  public static Cell createCell(
+      final Workbook workbook,
+      final Row row,
+      final int number,
+      final Date value,
+      final String format) {
     final Cell cell = row.createCell(number);
     cell.setCellValue(value);
     cell.setCellStyle(createCellStyle(workbook, format));
@@ -92,5 +108,4 @@ class CellFactory {
     cellStyle.setDataFormat(createHelper.createDataFormat().getFormat(format));
     return cellStyle;
   }
-
 }

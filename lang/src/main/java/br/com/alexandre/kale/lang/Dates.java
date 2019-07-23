@@ -15,51 +15,53 @@ import org.slf4j.LoggerFactory;
 
 public class Dates {
   private static Logger logger = LoggerFactory.getLogger(Date.class);
-  
+
   public static Date atStartOfDay(final Date date) {
-      if (date == null) {
-          return null;
-      } else {
-          return DateUtils.truncate(date, Calendar.DATE);
-      }
-  }
-  
-  public static Date  atEndOfDay(final Date date) {
-      if (date == null) {
-          return null;
-      } else {
-          return DateUtils.addMilliseconds(DateUtils.ceiling(date, Calendar.DATE), -1);
-      }
-  }
-  
-  public static Date from(final Object value, final String pattern) {
-      logger.debug("Value to be converted to: '{}'", value);
-      if (value == null) {
-          return null;
-      } else if (value instanceof Date) {
-          return (Date) value;
-      } else if (value instanceof LocalDate) {
-          return Date.from(((LocalDate) value).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-      } else if (value instanceof LocalDateTime) {
-          return Date.from(((LocalDateTime) value).atZone(ZoneId.systemDefault()).toInstant());
-      } else if (value instanceof Instant) {
-          return Date.from(((Instant) value));
-      } else if (value instanceof Calendar) {
-          return ((Calendar) value).getTime();
-      } else if (value instanceof Long) {
-          return new Date((Long) value);
-      } else if (value instanceof String) {
-          try {
-              return Date.from(Instant.parse(value.toString()));
-          } catch (final DateTimeParseException e4) {
-              try {
-                  return new SimpleDateFormat(pattern).parse(value.toString());
-              } catch (final ParseException e1) {
-                  throw new IllegalArgumentException(String.format("Invalid value format: '%s' used in conversion", value.toString()), e4);
-              }
-          }
-      }
-      throw new IllegalArgumentException(String.format("Invalid value type: '%s' used in conversion", value.getClass().getName()));
+    if (date == null) {
+      return null;
+    } else {
+      return DateUtils.truncate(date, Calendar.DATE);
+    }
   }
 
+  public static Date atEndOfDay(final Date date) {
+    if (date == null) {
+      return null;
+    } else {
+      return DateUtils.addMilliseconds(DateUtils.ceiling(date, Calendar.DATE), -1);
+    }
+  }
+
+  public static Date from(final Object value, final String pattern) {
+    logger.debug("Value to be converted to: '{}'", value);
+    if (value == null) {
+      return null;
+    } else if (value instanceof Date) {
+      return (Date) value;
+    } else if (value instanceof LocalDate) {
+      return Date.from(
+          ((LocalDate) value).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+    } else if (value instanceof LocalDateTime) {
+      return Date.from(((LocalDateTime) value).atZone(ZoneId.systemDefault()).toInstant());
+    } else if (value instanceof Instant) {
+      return Date.from(((Instant) value));
+    } else if (value instanceof Calendar) {
+      return ((Calendar) value).getTime();
+    } else if (value instanceof Long) {
+      return new Date((Long) value);
+    } else if (value instanceof String) {
+      try {
+        return Date.from(Instant.parse(value.toString()));
+      } catch (final DateTimeParseException e4) {
+        try {
+          return new SimpleDateFormat(pattern).parse(value.toString());
+        } catch (final ParseException e1) {
+          throw new IllegalArgumentException(
+              String.format("Invalid value format: '%s' used in conversion", value.toString()), e4);
+        }
+      }
+    }
+    throw new IllegalArgumentException(
+        String.format("Invalid value type: '%s' used in conversion", value.getClass().getName()));
+  }
 }

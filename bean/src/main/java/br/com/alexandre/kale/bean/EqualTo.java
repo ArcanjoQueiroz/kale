@@ -7,4 +7,5 @@ import java.lang.annotation.Target;
 
 @Retention(RUNTIME)
 @Target(ElementType.FIELD)
-public @interface EqualTo { }
+public @interface EqualTo {
+}

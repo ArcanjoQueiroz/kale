@@ -2,6 +2,8 @@ package br.com.alexandre.kale.xls;
 
 import static br.com.alexandre.kale.xls.CellFactory.createCell;
 import static com.google.common.base.Preconditions.checkArgument;
+
+import com.google.common.base.Strings;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,7 +17,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.common.base.Strings;
 
 public class XlsWriter implements Closeable {
 
@@ -31,7 +32,8 @@ public class XlsWriter implements Closeable {
     this(outputStream, format, null);
   }
 
-  public XlsWriter(final File file, final Format format, final String sheetName) throws IOException {
+  public XlsWriter(final File file, final Format format, final String sheetName)
+      throws IOException {
     this(new FileOutputStream(file), format, sheetName);
   }
 
@@ -40,11 +42,12 @@ public class XlsWriter implements Closeable {
   }
 
   public XlsWriter(final OutputStream outputStream, final Format format, final String sheetName) {
-    checkArgument(outputStream != null, "OutputStream is null");        
+    checkArgument(outputStream != null, "OutputStream is null");
     this.autoSize = true;
     this.outputStream = outputStream;
     this.workbook = (format == Format.XLS) ? new HSSFWorkbook() : new XSSFWorkbook();
-    this.sheet = Strings.isNullOrEmpty(sheetName) ? workbook.createSheet(): workbook.createSheet(sheetName);
+    this.sheet =
+        Strings.isNullOrEmpty(sheetName) ? workbook.createSheet() : workbook.createSheet(sheetName);
     this.rowNumber = 0;
   }
 
@@ -61,7 +64,8 @@ public class XlsWriter implements Closeable {
             logger.debug("Writing cell: '{}'", cellNumber);
             for (final Object cell : cells) {
               createCell(workbook, ro, cellNumber, cell);
-              logger.debug("Writing '{}' value into cell", cell.getClass().getSimpleName(), cellNumber);
+              logger.debug(
+                  "Writing '{}' value into cell", cell.getClass().getSimpleName(), cellNumber);
               cellNumber++;
             }
             if (cellNumber > lastColumnNumber) {
@@ -88,7 +92,7 @@ public class XlsWriter implements Closeable {
   }
 
   @Override
-  public void close() throws IOException {        
+  public void close() throws IOException {
     logger.debug("Writing to output stream");
     try {
       workbook.write(outputStream);
@@ -97,5 +101,4 @@ public class XlsWriter implements Closeable {
     }
     workbook.close();
   }
-
 }

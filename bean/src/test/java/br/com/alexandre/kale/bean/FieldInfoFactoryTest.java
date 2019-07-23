@@ -1,14 +1,12 @@
 package br.com.alexandre.kale.bean;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
-import br.com.alexandre.kale.bean.FieldInfo;
-import br.com.alexandre.kale.bean.FieldInfoFactory;
-import br.com.alexandre.kale.bean.LessThan;
 
 public class FieldInfoFactoryTest {
 
@@ -25,13 +23,12 @@ public class FieldInfoFactoryTest {
 
       private static final long serialVersionUID = 1840560010694686985L;
 
-      @LessThan
-      private Long id;
+      @LessThan private Long id;
       private String name;
       private Character sex;
       private Date birth;
 
-      public MyBean() { }
+      public MyBean() {}
 
       @SuppressWarnings("unused")
       public Long getId() {
@@ -73,8 +70,7 @@ public class FieldInfoFactoryTest {
       @Override
       public String toString() {
         return "MyBean [id=" + id + ", name=" + name + ", sex=" + sex + ", birth=" + birth + "]";
-      }    
-
+      }
     }
 
     final MyBean myBean = new MyBean();
@@ -85,10 +81,11 @@ public class FieldInfoFactoryTest {
     final List<FieldInfo> actual = fieldInfoFactory.createFieldInfo(myBean);
     assertThat(actual).isNotNull();
     assertThat(actual.size()).isEqualTo(3);
-    assertThat(actual).contains(
-        new FieldInfo("id", "<", 1L),
-        new FieldInfo("name", "=", "Foo"),
-        new FieldInfo("sex", "=", "M"));
+    assertThat(actual)
+        .contains(
+            new FieldInfo("id", "<", 1L),
+            new FieldInfo("name", "=", "Foo"),
+            new FieldInfo("sex", "=", "M"));
   }
 
   @Test(expected = IllegalArgumentException.class)

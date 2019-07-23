@@ -4,9 +4,8 @@ import org.junit.Test;
 
 public class XlsReaderTest {
 
-  @Test(expected=IllegalArgumentException.class)
+  @Test(expected = IllegalArgumentException.class)
   public void shouldThrowAnIllegalArgumentExceptionIfPathIsNull() {
     new XlsReader(null);
   }
-  
 }

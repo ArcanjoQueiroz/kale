@@ -5,6 +5,7 @@ import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.isRegularFile;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
@@ -35,8 +36,9 @@ public class ZipExtractor {
     checkArgument(path != null, "Invalid target directory");
     checkArgument(exists(zip), "Target does not exist");
     checkArgument(isDirectory(path), "Target is not a directory");
-    
-    try (ZipInputStream is = new ZipInputStream(new BufferedInputStream(new FileInputStream(zip.toFile())))) {
+
+    try (ZipInputStream is =
+        new ZipInputStream(new BufferedInputStream(new FileInputStream(zip.toFile())))) {
       logger.debug("Extracting '{}' zip file", this.zip.toFile().getName());
       ZipEntry entry = null;
       while ((entry = is.getNextEntry()) != null) {
@@ -54,10 +56,11 @@ public class ZipExtractor {
       logger.debug("Zip file '{}' extracted successfully", this.zip.toFile().getName());
     } catch (final Exception e) {
       throw new RuntimeException(e);
-    }    
+    }
   }
 
-  private void extractFile(final InputStream inputStream, final FileOutputStream outputStream) throws IOException {
+  private void extractFile(final InputStream inputStream, final FileOutputStream outputStream)
+      throws IOException {
     int count = -1;
     byte[] buffer = new byte[BUFFER_SIZE];
     try (BufferedOutputStream out = new BufferedOutputStream(outputStream, BUFFER_SIZE)) {
@@ -66,5 +69,4 @@ public class ZipExtractor {
       }
     }
   }
-
 }

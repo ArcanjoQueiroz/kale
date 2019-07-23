@@ -2,17 +2,18 @@ package br.com.alexandre.kale.csv;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+
 import java.util.Date;
 import org.junit.Before;
-import org.junit.Test;  
+import org.junit.Test;
 
-public class CSVTest {
+public class CsvTest {
 
-  private CSV csv;
+  private Csv csv;
 
   @Before
   public void setUp() {
-    this.csv = new CSV();
+    this.csv = new Csv();
   }
 
   @Test
@@ -26,10 +27,9 @@ public class CSVTest {
   @Test
   public void shouldCoalesceRow() {
     final Date now = new Date();
-    assertArrayEquals(new String[] { "1", "Alexandre", now.toString(), "Male", "" }, 
-        this.csv.coalesce(
-            new Object[] { 1, "Alexandre", now, "Male", null }
-            , null));
+    assertArrayEquals(
+        new String[] {"1", "Alexandre", now.toString(), "Male", ""},
+        this.csv.coalesce(new Object[] {1, "Alexandre", now, "Male", null}, null));
 
     assertEquals(0, this.csv.coalesce(null, null).length);
   }

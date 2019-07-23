@@ -1,15 +1,16 @@
 package br.com.alexandre.kale.bean;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import static com.google.common.base.Preconditions.checkArgument;
 
 public class FieldInfoFactory {
   private ObjectMapper objectMapper;
@@ -30,7 +31,7 @@ public class FieldInfoFactory {
     objectMapper.configure(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS, false);
     objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     return objectMapper;
-  }    
+  }
 
   @SuppressWarnings("unchecked")
   public List<FieldInfo> createFieldInfo(final Object o) {
@@ -38,7 +39,7 @@ public class FieldInfoFactory {
     final Map<String, Object> value = objectMapper.convertValue(o, Map.class);
     return value.entrySet().stream()
         .map(entry -> createField(o, entry))
-        .collect(Collectors.toList());    
+        .collect(Collectors.toList());
   }
 
   private FieldInfo createField(final Object o, final Entry<String, Object> entry) {

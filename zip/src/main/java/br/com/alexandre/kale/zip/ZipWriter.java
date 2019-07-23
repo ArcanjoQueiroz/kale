@@ -17,7 +17,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
@@ -35,7 +34,7 @@ public class ZipWriter implements Closeable {
   public ZipWriter(final OutputStream destination) {
     checkArgument(destination != null, "Destination is null");
     this.destination = destination;
-    this.zip = createZipOutputStream(this.destination);        
+    this.zip = createZipOutputStream(this.destination);
   }
 
   public ZipWriter(final File file) {
@@ -46,7 +45,7 @@ public class ZipWriter implements Closeable {
     } catch (final FileNotFoundException e) {
       throw new IllegalArgumentException(e);
     }
-    this.zip = createZipOutputStream(this.destination);       
+    this.zip = createZipOutputStream(this.destination);
   }
 
   private ArchiveOutputStream createZipOutputStream(OutputStream out) {
@@ -57,7 +56,7 @@ public class ZipWriter implements Closeable {
     }
   }
 
-  public void write(final File...paths) {
+  public void write(final File... paths) {
     checkArgument(paths != null && paths.length > 0, "There is no input resources");
     try {
       write(zip, paths);
@@ -66,23 +65,20 @@ public class ZipWriter implements Closeable {
     }
   }
 
-  public void finish() throws IOException {
-    zip.finish();
-  }
-
   private void write(final ArchiveOutputStream zip, final File... files) throws IOException {
-    for (final File file: files) {
+    for (final File file : files) {
       if (file.isFile()) {
         logger.debug("Archiving file '{}'", file.getName().toString());
         zip.putArchiveEntry(new ZipArchiveEntry(file, file.getName().toString()));
         copy(new FileInputStream(file), zip);
         zip.closeArchiveEntry();
       } else if (file.isDirectory()) {
-        try (DirectoryStream<Path> directoryStream = newDirectoryStream(Paths.get(file.getAbsolutePath()))) {
-          final List<File> directoryPaths = StreamSupport
-              .stream(directoryStream.spliterator(), false)
-              .map(f -> f.toFile())
-              .collect(Collectors.toList());
+        try (DirectoryStream<Path> directoryStream =
+            newDirectoryStream(Paths.get(file.getAbsolutePath()))) {
+          final List<File> directoryPaths =
+              StreamSupport.stream(directoryStream.spliterator(), false)
+                  .map(f -> f.toFile())
+                  .collect(Collectors.toList());
           if (directoryPaths.size() > 0) {
             final File[] param = new File[directoryPaths.size()];
             logger.debug("Invoking write with subdirectory '{}' content", file.toString());
@@ -90,14 +86,17 @@ public class ZipWriter implements Closeable {
           } else {
             logger.debug("There is no content to iterate");
           }
-        } 
+        }
       }
     }
   }
 
+  public void finish() throws IOException {
+    zip.finish();
+  }
+  
   @Override
-  public void close() throws IOException {     
-    this.zip.close();        
+  public void close() throws IOException {
+    this.zip.close();
   }
 }
-

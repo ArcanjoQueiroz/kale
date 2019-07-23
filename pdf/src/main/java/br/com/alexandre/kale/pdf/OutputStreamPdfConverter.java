@@ -8,21 +8,26 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class OutputStreamPDFConverter implements PDFConverter {
+public abstract class OutputStreamPdfConverter implements PdfConverter {
 
-  private Logger logger = LoggerFactory.getLogger(OutputStreamPDFConverter.class);
+  private Logger logger = LoggerFactory.getLogger(OutputStreamPdfConverter.class);
 
   @Override
   public File convertAsync(final File source) {
     logger.debug("Converting the file: '{}'", source.getAbsolutePath());
     checkArgument(source != null && source.exists() && source.isFile(), "source file");
 
-    final File destination = new File(String.format("%s%s%s.pdf", System.getProperty("java.io.tmpdir"), File.separator, RandomStringUtils.randomAlphabetic(25)));
+    final File destination =
+        new File(
+            String.format(
+                "%s%s%s.pdf",
+                System.getProperty("java.io.tmpdir"),
+                File.separator,
+                RandomStringUtils.randomAlphabetic(25)));
     try {
       convert(source, new FileOutputStream(destination));
     } catch (final FileNotFoundException e) {
@@ -36,7 +41,7 @@ public abstract class OutputStreamPDFConverter implements PDFConverter {
     logger.debug("Converting the file: '{}'", source.getAbsolutePath());
     checkArgument(source != null && source.exists() && source.isFile(), "source file");
 
-    try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {        
+    try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
       convert(source, outputStream);
       return outputStream.toByteArray();
     } catch (final IOException e) {
@@ -45,5 +50,4 @@ public abstract class OutputStreamPDFConverter implements PDFConverter {
   }
 
   public abstract void convert(final File source, final OutputStream outputStream);
-
 }

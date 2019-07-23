@@ -1,5 +1,6 @@
 package br.com.alexandre.kale;
 
+import com.zaxxer.hikari.HikariDataSource;
 import java.sql.SQLException;
 import java.util.Map;
 import javax.persistence.EntityManager;
@@ -16,14 +17,13 @@ import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
-import com.zaxxer.hikari.HikariDataSource;
 
 public abstract class JpaIntegrationTestConfig {
 
   private String[] packagesToScan;
 
   public JpaIntegrationTestConfig(final String packageToScan) {
-    this.packagesToScan = new String[] { packageToScan };
+    this.packagesToScan = new String[] {packageToScan};
   }
 
   public JpaIntegrationTestConfig(final String[] packagesToScan) {
@@ -32,16 +32,18 @@ public abstract class JpaIntegrationTestConfig {
 
   @Bean
   @Primary
-  public DataSource getDataSource(@Value("${spring.datasource.url}") final String url,
+  public DataSource getDataSource(
+      @Value("${spring.datasource.url}") final String url,
       @Value("${spring.datasource.driverClassName}") final String driverClassName,
       @Value("${spring.datasource.username}") final String username,
-      @Value("${spring.datasource.password}") final String password) {     
+      @Value("${spring.datasource.password}") final String password) {
     return DataSourceBuilder.create()
         .driverClassName(driverClassName)
         .username(username)
         .password(password)
         .url(url)
-        .type(HikariDataSource.class).build();
+        .type(HikariDataSource.class)
+        .build();
   }
 
   @Primary
@@ -52,17 +54,20 @@ public abstract class JpaIntegrationTestConfig {
       @Value("${spring.jpa.properties.show_sql:true}") final boolean showSql,
       @Value("${spring.jpa.properties.format_sql:true}") final boolean formatSql,
       @Value("${spring.jpa.properties.generate_ddl:false}") final boolean generateDdl,
-      @Value("${spring.jpa.properties.use_sql_comments:true}") final boolean useSqlComments, 
+      @Value("${spring.jpa.properties.use_sql_comments:true}") final boolean useSqlComments,
       final DataSource dataSource) {
 
-    final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
+    final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean =
+        new LocalContainerEntityManagerFactoryBean();
     if (packagesToScan != null && packagesToScan.length > 0) {
       entityManagerFactoryBean.setPackagesToScan(packagesToScan);
     }
     entityManagerFactoryBean.setPersistenceUnitName(persistenceUnitName);
     entityManagerFactoryBean.setDataSource(dataSource);
 
-    final JpaVendorAdapter adapter = createHibernateJpaVendorAdapter(nullPassing, showSql, formatSql, generateDdl, useSqlComments);     
+    final JpaVendorAdapter adapter =
+        createHibernateJpaVendorAdapter(
+            nullPassing, showSql, formatSql, generateDdl, useSqlComments);
     entityManagerFactoryBean.setJpaVendorAdapter(adapter);
 
     entityManagerFactoryBean.afterPropertiesSet();
@@ -71,8 +76,12 @@ public abstract class JpaIntegrationTestConfig {
     return entityManagerFactoryBean;
   }
 
-  private JpaVendorAdapter createHibernateJpaVendorAdapter(final boolean nullPassing, final boolean showSql, 
-      final boolean formatSql, final boolean generateDdl, final boolean useSqlComments) {
+  private JpaVendorAdapter createHibernateJpaVendorAdapter(
+      final boolean nullPassing,
+      final boolean showSql,
+      final boolean formatSql,
+      final boolean generateDdl,
+      final boolean useSqlComments) {
     final HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
     adapter.setShowSql(showSql);
     adapter.setGenerateDdl(generateDdl);
@@ -91,7 +100,8 @@ public abstract class JpaIntegrationTestConfig {
   }
 
   @Bean
-  public PlatformTransactionManager transactionManager(final EntityManagerFactory entityManagerFactory) throws SQLException {
+  public PlatformTransactionManager transactionManager(
+      final EntityManagerFactory entityManagerFactory) throws SQLException {
     final JpaTransactionManager txManager = new JpaTransactionManager();
     txManager.setEntityManagerFactory(entityManagerFactory);
     return txManager;
@@ -102,4 +112,3 @@ public abstract class JpaIntegrationTestConfig {
     return new PersistenceExceptionTranslationPostProcessor();
   }
 }
-
