@@ -17,19 +17,15 @@ public class Dates {
   private static Logger logger = LoggerFactory.getLogger(Date.class);
 
   public static Date atStartOfDay(final Date date) {
-    if (date == null) {
-      return null;
-    } else {
-      return DateUtils.truncate(date, Calendar.DATE);
-    }
+    return (date != null) 
+        ? DateUtils.truncate(date, Calendar.DATE) 
+        : null;
   }
 
   public static Date atEndOfDay(final Date date) {
-    if (date == null) {
-      return null;
-    } else {
-      return DateUtils.addMilliseconds(DateUtils.ceiling(date, Calendar.DATE), -1);
-    }
+    return (date != null) 
+        ? DateUtils.addMilliseconds(DateUtils.ceiling(date, Calendar.DATE), -1) 
+        : null;
   }
 
   public static Date from(final Object value, final String pattern) {
