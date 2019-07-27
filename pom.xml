@@ -90,12 +90,12 @@
 			<!-- DOCX4j -->
 			<dependency>
 				<groupId>org.docx4j</groupId>
-				<artifactId>docx4j-core</artifactId>
+				<artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
 				<version>11.1.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.docx4j</groupId>
-				<artifactId>docx4j-export-fo</artifactId>
+				<artifactId>docx4j-docx-anon</artifactId>
 				<version>11.1.0</version>
 			</dependency>
 
@@ -222,5 +222,6 @@
 		<module>pdf</module>
 		<module>email</module>
 		<module>spring-data-jpa-test</module>
+		<module>docx</module>
 	</modules>
 </project>
