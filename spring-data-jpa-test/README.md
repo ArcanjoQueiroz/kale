@@ -26,6 +26,11 @@ import br.com.alexandre.repository.PersonRepository;
         "logging.level.root=ERROR",
         "logging.level.org.springframework=ERROR",
         "logging.level.org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl=ERROR"
+		 "logging.level.org.hibernate.SQL=DEBUG",
+    	 "logging.level.org.hibernate.type=TRACE",
+    	 "logging.level.org.hibernate.jdbc=TRACE",
+    	 "logging.level.org.hibernate.engine.query=TRACE",
+    	 "logging.level.org.hibernate.type.descriptor.sql.BasicBinder=DEBUG"    
     },
     classes = br.com.alexandre.MyIntegrationTest.MyConfig.class)
 public class MyIntegrationTest {
