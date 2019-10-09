@@ -1,22 +1,20 @@
-package br.com.alexandre.kale;
+package br.com.alexandre.kale.spring.test;
 
-import com.zaxxer.hikari.HikariDataSource;
 import java.sql.SQLException;
-import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver;
 import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import com.zaxxer.hikari.HikariDataSource;
 
 public abstract class JpaIntegrationTestConfig {
 
@@ -28,6 +26,12 @@ public abstract class JpaIntegrationTestConfig {
 
   public JpaIntegrationTestConfig(final String[] packagesToScan) {
     this.packagesToScan = packagesToScan;
+  }
+  
+  @Bean
+  @ConditionalOnMissingBean(IntegrationTestVendorAdapter.class)
+  public IntegrationTestVendorAdapter integrationTestVendorAdapter() {
+    return new HibernateIntegrationTestVendorAdapter();
   }
 
   @Bean
@@ -46,15 +50,11 @@ public abstract class JpaIntegrationTestConfig {
         .build();
   }
 
-  @Primary
   @Bean
+  @Primary
   public LocalContainerEntityManagerFactoryBean entityManagerFactory(
       @Value("${spring.jpa.persistence-unit-name:default}") final String persistenceUnitName,
-      @Value("${spring.jpa.properties.proc.param_null_passing:true}") final boolean nullPassing,
-      @Value("${spring.jpa.properties.show_sql:true}") final boolean showSql,
-      @Value("${spring.jpa.properties.format_sql:true}") final boolean formatSql,
-      @Value("${spring.jpa.properties.generate_ddl:false}") final boolean generateDdl,
-      @Value("${spring.jpa.properties.use_sql_comments:true}") final boolean useSqlComments,
+      final IntegrationTestVendorAdapter integrationTestVendorAdapter,
       final DataSource dataSource) {
 
     final LocalContainerEntityManagerFactoryBean entityManagerFactoryBean =
@@ -64,34 +64,13 @@ public abstract class JpaIntegrationTestConfig {
     }
     entityManagerFactoryBean.setPersistenceUnitName(persistenceUnitName);
     entityManagerFactoryBean.setDataSource(dataSource);
-
-    final JpaVendorAdapter adapter =
-        createHibernateJpaVendorAdapter(
-            nullPassing, showSql, formatSql, generateDdl, useSqlComments);
-    entityManagerFactoryBean.setJpaVendorAdapter(adapter);
-
+    entityManagerFactoryBean.setJpaVendorAdapter(integrationTestVendorAdapter.getVendorAdapter());
+    entityManagerFactoryBean.setJpaPropertyMap(integrationTestVendorAdapter.getProperties());
+    
     entityManagerFactoryBean.afterPropertiesSet();
     entityManagerFactoryBean.setLoadTimeWeaver(new InstrumentationLoadTimeWeaver());
 
     return entityManagerFactoryBean;
-  }
-
-  private JpaVendorAdapter createHibernateJpaVendorAdapter(
-      final boolean nullPassing,
-      final boolean showSql,
-      final boolean formatSql,
-      final boolean generateDdl,
-      final boolean useSqlComments) {
-    final HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
-    adapter.setShowSql(showSql);
-    adapter.setGenerateDdl(generateDdl);
-
-    final Map<String, Object> propertyMap = adapter.getJpaPropertyMap();
-    propertyMap.put("hibernate.format_sql", formatSql);
-    propertyMap.put("hibernate.use_sql_comments", useSqlComments);
-    propertyMap.put("hibernate.proc.param_null_passing", nullPassing);
-
-    return adapter;
   }
 
   @Bean

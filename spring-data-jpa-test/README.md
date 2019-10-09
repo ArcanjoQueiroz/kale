@@ -23,8 +23,6 @@ import br.com.alexandre.repository.PersonRepository;
         "spring.datasource.username=test",
         "spring.datasource.password=test", 
         "spring.datasource.driverClassName=org.postgresql.Driver",
-        "spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true",
-        "spring.jpa.properties.hibernate.temp.use_jdbc_metadata_defaults=false",
         "logging.level.root=ERROR",
         "logging.level.org.springframework=ERROR",
         "logging.level.org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl=ERROR"
