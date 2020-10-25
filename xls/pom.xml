@@ -13,8 +13,6 @@
 
 	<name>Kale XLS</name>
 
-	<url>https://arcanjoqueiroz.github.io</url>
-
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>

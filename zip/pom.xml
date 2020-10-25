@@ -13,8 +13,6 @@
 
 	<name>Kale Zip</name>
 
-	<url>https://arcanjoqueiroz.github.io</url>
-
 	<dependencies>
 		<dependency>
 			<groupId>com.google.guava</groupId>

@@ -13,11 +13,6 @@
 
 	<name>kale Docx</name>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>12</java.version>
-	</properties>
-
 	<dependencies>
 		<!-- JUnit -->
 		<dependency>
@@ -57,7 +52,6 @@
 			<artifactId>assertj-core</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 
 	</dependencies>
 </project>

@@ -13,8 +13,6 @@
 
 	<name>kale Email</name>
 
-	<url>https://arcanjoqueiroz.github.io</url>
-
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>

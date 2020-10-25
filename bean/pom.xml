@@ -13,8 +13,6 @@
 
 	<name>Kale Bean</name>
 
-	<url>https://arcanjoqueiroz.github.io</url>
-
 	<dependencies>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

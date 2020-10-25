@@ -12,9 +12,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -64,13 +64,12 @@ public class XlsReader {
     return list;
   }
 
-  @SuppressWarnings("deprecation")
   private Object[] getCells(final Row row) {
     final List<Object> cells = new ArrayList<>();
     final Iterator<Cell> cellIterator = row.cellIterator();
     while (cellIterator.hasNext()) {
       final Cell cell = cellIterator.next();
-      switch (cell.getCellTypeEnum()) {
+      switch (cell.getCellType()) {
         case BOOLEAN: {
           cells.add(cell.getBooleanCellValue());
           break;
@@ -80,7 +79,7 @@ public class XlsReader {
           break;
         }
         case NUMERIC: {
-          if (HSSFDateUtil.isCellDateFormatted(cell)) {
+          if (DateUtil.isCellDateFormatted(cell)) {
             cells.add(cell.getDateCellValue());
           } else {
             cells.add(cell.getNumericCellValue());

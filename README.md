@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/ArcanjoQueiroz/kale.svg?branch=master)](https://travis-ci.org/ArcanjoQueiroz/kale)
 
-A collection of utilities methods for **Java 12** or superior.
+A collection of utilities methods for **Java 13** or superior.
 
 ## References
 
