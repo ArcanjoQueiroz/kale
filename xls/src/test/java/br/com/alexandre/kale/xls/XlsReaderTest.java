@@ -1,11 +1,16 @@
 package br.com.alexandre.kale.xls;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import org.junit.Test;
 
 public class XlsReaderTest {
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void shouldThrowAnIllegalArgumentExceptionIfPathIsNull() {
-    new XlsReader(null);
+    assertThatThrownBy(() -> {
+      new XlsReader(null);
+    }).isInstanceOf(IllegalArgumentException.class);
+    
   }
 }

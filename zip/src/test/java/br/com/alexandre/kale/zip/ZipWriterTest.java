@@ -1,7 +1,6 @@
 package br.com.alexandre.kale.zip;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +35,7 @@ public class ZipWriterTest {
 
     final File destination = new File(fileName);
 
-    assertFalse(destination.exists());
+    assertThat(destination).doesNotExist();
 
     try (final ZipWriter writer = new ZipWriter(destination)) {
       writer.write(
@@ -45,7 +44,7 @@ public class ZipWriterTest {
           new File("src/test/resources/empty.xls"));
     }
 
-    assertTrue(destination.exists());
+    assertThat(destination).exists();
   }
 
   @Test
@@ -57,13 +56,13 @@ public class ZipWriterTest {
 
     final File destination = new File(fileName);
 
-    assertFalse(destination.exists());
+    assertThat(destination).doesNotExist();
 
     try (final ZipWriter writer = new ZipWriter(destination)) {
       writer.write(new File("src/test/resources/customers.xls"));
     }
 
-    assertTrue(destination.exists());
+    assertThat(destination).exists();
   }
 
   @Test
@@ -75,12 +74,12 @@ public class ZipWriterTest {
 
     final File destination = new File(fileName);
 
-    assertFalse(destination.exists());
+    assertThat(destination).doesNotExist();
 
     try (final ZipWriter writer = new ZipWriter(destination)) {
       writer.write(new File("src/test/resources"));
     }
 
-    assertTrue(destination.exists());
+    assertThat(destination).exists();
   }
 }

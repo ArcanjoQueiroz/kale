@@ -1,7 +1,6 @@
 package br.com.alexandre.kale.bean;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;

@@ -1,7 +1,6 @@
 package br.com.alexandre.kale.email;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.util.GreenMail;
@@ -54,19 +53,19 @@ public class MailSenderTest {
         Attachment.from(
             new ByteArrayInputStream("my attachment".getBytes()), "text/plain", "foo.txt"));
 
-    assertEquals(1, greenMail.getReceivedMessages().length);
-    assertEquals("Subject", greenMail.getReceivedMessages()[0].getSubject());
-    assertEquals("foo@foo.com", greenMail.getReceivedMessages()[0].getFrom()[0].toString());
+    assertThat(greenMail.getReceivedMessages().length).isEqualTo(1);
+    assertThat(greenMail.getReceivedMessages()[0].getSubject()).isEqualTo("Subject");
+    assertThat(greenMail.getReceivedMessages()[0].getFrom()[0].toString()).isEqualTo("foo@foo.com");
 
-    assertTrue(greenMail.getReceivedMessages()[0].getContent() instanceof MimeMultipart);
+    assertThat(greenMail.getReceivedMessages()[0].getContent()).isInstanceOf(MimeMultipart.class);
 
     System.out.println(GreenMailUtil.getBody(greenMail.getReceivedMessages()[0]));
 
     final MimeMultipart mp = (MimeMultipart) greenMail.getReceivedMessages()[0].getContent();
 
-    assertEquals(2, mp.getCount());
+    assertThat(mp.getCount()).isEqualTo(2);
 
-    assertEquals("my attachment", GreenMailUtil.getBody(mp.getBodyPart(1)).trim());
+    assertThat(GreenMailUtil.getBody(mp.getBodyPart(1)).trim()).isEqualTo("my attachment");
   }
 
   @AfterClass
