@@ -4,14 +4,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>kale</artifactId>
-		<groupId>br.com.alexandre</groupId>
+		<artifactId>kefla</artifactId>
+		<groupId>com.github.arcanjoaq</groupId>
 		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>kale-email</artifactId>
+	<artifactId>kefla-email</artifactId>
 
-	<name>kale Email</name>
+	<name>kefla Email</name>
 
 	<dependencies>
 		<dependency>
