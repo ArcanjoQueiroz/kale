@@ -1,6 +1,6 @@
 ## Kefla
 
-[![Build Status](https://travis-ci.org/ArcanjoQueiroz/kale.svg?branch=master)](https://travis-ci.org/ArcanjoQueiroz/kale)
+[![Build Status](https://travis-ci.org/arcanjoaq/kefla.svg?branch=master)](https://travis-ci.org/arcanjoaq/kefla)
 
 A collection of utilities methods for **Java 13** or superior.
 
