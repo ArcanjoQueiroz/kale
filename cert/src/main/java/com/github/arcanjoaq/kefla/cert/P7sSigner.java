@@ -21,6 +21,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 
 public class P7sSigner {
+
   private final String keystorePath;
   private final String keystorePassword;
   private final String keystoreAlias;
@@ -40,11 +41,11 @@ public class P7sSigner {
     this.keystorePath = keystorePath;
     this.keystorePassword = keystorePassword;
     this.keystoreAlias = keystoreAlias;
-    this.signatureAlgorithm = "SHA256withRSA";
+    this.signatureAlgorithm = Constants.SIGNATURE_ALGORITHM;
   }
 
   public KeyStore loadKeyStore() throws Exception {
-    final KeyStore keystore = KeyStore.getInstance("JKS");
+    final KeyStore keystore = KeyStore.getInstance(Constants.KEYSTORE_TYPE);
     try (final InputStream is = new FileInputStream(this.keystorePath)) {
       keystore.load(is, this.keystorePassword.toCharArray());
     }

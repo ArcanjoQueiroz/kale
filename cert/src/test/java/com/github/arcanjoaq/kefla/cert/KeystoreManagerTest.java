@@ -24,7 +24,7 @@ public class KeystoreManagerTest {
     assertThat(keyStore).isNotNull();
     assertThat(f).exists();
     
-    final KeystoreManager keystoreManager = KeystoreManager.fromPath(file, alias, password);
+    final KeystoreManager keystoreManager = KeystoreManager.of(file, alias, password);
     
     final Certificate[] certificateChain = keystoreManager.getCertificateChain();    
     assertThat(certificateChain).isNotNull().isNotEmpty();

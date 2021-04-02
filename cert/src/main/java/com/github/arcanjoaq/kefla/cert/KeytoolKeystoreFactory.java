@@ -12,15 +12,7 @@ import com.google.common.io.CharStreams;
 
 public class KeytoolKeystoreFactory implements KeystoreFactory {
 
-  private static final String ALGORITHM = "RSA";
-  
-  private static final String KEYSTORE_TYPE = "JKS";
-
   private static final int DEFAULT_VALIDITY = 365;
-
-  private static final int KEY_SIZE = 2048;
-  
-  private static final String SIGNATURE_ALGORITHM = "SHA256WithRSA";
   
   private static final Logger LOGGER = LoggerFactory.getLogger(KeytoolKeystoreFactory.class);
 
@@ -34,8 +26,8 @@ public class KeytoolKeystoreFactory implements KeystoreFactory {
     final String command = String.format("keytool -genkeypair -dname %s"
         + " -keyalg %s -alias %s -keypass %s -keystore %s"
         + " -storepass %s -validity %d -sigalg %s -keysize %d", 
-        dn, ALGORITHM, alias, password, file, password, 
-        DEFAULT_VALIDITY, SIGNATURE_ALGORITHM, KEY_SIZE);
+        dn, Constants.ALGORITHM, alias, password, file, password, 
+        DEFAULT_VALIDITY, Constants.SIGNATURE_ALGORITHM, Constants.KEY_SIZE);
     LOGGER.info("Command: '{}'", command);
     try {
       final Process process = Runtime.getRuntime().exec(command);
@@ -46,7 +38,7 @@ public class KeytoolKeystoreFactory implements KeystoreFactory {
       LOGGER.error("Error: '{}'", error);
       LOGGER.debug("Input: '{}'", input);
 
-      final KeyStore keyStore = KeyStore.getInstance(KEYSTORE_TYPE);    
+      final KeyStore keyStore = KeyStore.getInstance(Constants.KEYSTORE_TYPE);    
       try (final InputStream is = new FileInputStream(file)) {
         keyStore.load(is, password.toCharArray());
       }

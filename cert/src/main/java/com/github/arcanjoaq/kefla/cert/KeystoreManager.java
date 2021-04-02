@@ -15,18 +15,26 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import com.google.common.base.Strings;
 
 public class KeystoreManager {
-
-  private char[] password;
-  private String alias;
-  private KeyStore keyStore;
+  
+  private final char[] password;
+  private final String alias;
+  private final KeyStore keyStore;
 
   KeystoreManager(final InputStream is, final String alias, 
       final String password) throws Exception {
+    Security.addProvider(new BouncyCastleProvider());
     this.password = Strings.isNullOrEmpty(password) ? null : password.toCharArray();
     this.alias = alias;
-    Security.addProvider(new BouncyCastleProvider());
-    this.keyStore = KeyStore.getInstance("JKS");
+    this.keyStore = KeyStore.getInstance(Constants.KEYSTORE_TYPE);
     this.keyStore.load(is, this.password);    
+  }
+
+  KeystoreManager(final KeyStore keystore, final String alias, 
+      final String password) throws Exception {
+    Security.addProvider(new BouncyCastleProvider());
+    this.password = Strings.isNullOrEmpty(password) ? null : password.toCharArray();
+    this.alias = alias;
+    this.keyStore = keystore;
   }
 
   public PrivateKey getPrivateKey() throws Exception {
@@ -38,32 +46,38 @@ public class KeystoreManager {
   }
 
   public String getPublicKeyAsString() throws Exception {
+    final String algorithm = getPublicKey().getAlgorithm().toUpperCase();
     final PublicKey publicKey = getPublicKey();
-    return "-----BEGIN CERTIFICATE-----\n"
+    return String.format("-----BEGIN %s PUBLIC KEY-----\n", algorithm)
       + Base64.getMimeEncoder().encodeToString(publicKey.getEncoded())
-      + "\n-----END CERTIFICATE-----";
+      + String.format("\n-----END %s PUBLIC KEY-----", algorithm);
   }
 
   public Certificate[] getCertificateChain() throws KeyStoreException {
     return this.keyStore.getCertificateChain(alias);
   }
 
-  public static KeystoreManager fromPath(final String path, final String alias,
+  public static KeystoreManager of(final String path, final String alias,
       final String password) throws Exception {
-    return fromPath(new File(path), alias, password);
+    return of(new File(path), alias, password);
   }
 
-  public static KeystoreManager fromPath(final File file, final String alias,
+  public static KeystoreManager of(final File file, final String alias,
       final String password) throws Exception {
     try (final InputStream is = new FileInputStream(file)) {
       return new KeystoreManager(is, alias, password);
     }
   }
 
-  public static KeystoreManager fromByteArray(final byte[] keystore, final String alias, 
+  public static KeystoreManager of(final byte[] keystore, final String alias, 
       final String password) throws Exception {
     try (final InputStream is = new ByteArrayInputStream(keystore)) {
       return new KeystoreManager(is, alias, password);
     }
+  }
+
+  public static KeystoreManager of(final KeyStore keystore, final String alias, 
+      final String password) throws Exception {
+    return new KeystoreManager(keystore, alias, password);
   }
 }

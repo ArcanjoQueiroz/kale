@@ -32,15 +32,7 @@ import com.google.common.base.Strings;
 
 public class BouncyCastleKeystoreFactory implements KeystoreFactory {
 
-  private static final String ALGORITHM = "RSA";
-
-  private static final String KEYSTORE_TYPE = "JKS";
-
   private static final int DEFAULT_VALIDITY = 365;
-  
-  private static final int KEY_SIZE = 2048;
-  
-  private static final String SIGNATURE_ALGORITHM = "SHA256WithRSA";
 
   public KeyStore createKeystore(final String alias, final String password, 
       final String dn,
@@ -52,14 +44,14 @@ public class BouncyCastleKeystoreFactory implements KeystoreFactory {
     Security.addProvider(new BouncyCastleProvider());
     try {
       final java.security.KeyPairGenerator keyPairGenerator = KeyPairGenerator
-          .getInstance(ALGORITHM, "BC");
-      keyPairGenerator.initialize(KEY_SIZE, new SecureRandom());
+          .getInstance(Constants.ALGORITHM, "BC");
+      keyPairGenerator.initialize(Constants.KEY_SIZE, new SecureRandom());
       final KeyPair keyPair = keyPairGenerator.generateKeyPair();
       final PrivateKey privateKey = keyPair.getPrivate();
       final X509Certificate selfCert = createSelfSignedX509Certificate(dn, keyPair);
 
       final java.security.cert.Certificate[] outChain = { selfCert };
-      final KeyStore outStore = KeyStore.getInstance(KEYSTORE_TYPE);
+      final KeyStore outStore = KeyStore.getInstance(Constants.KEYSTORE_TYPE);
 
       final char[] passwd = password.toCharArray();
       outStore.load(null, passwd);
@@ -69,7 +61,7 @@ public class BouncyCastleKeystoreFactory implements KeystoreFactory {
         outStore.store(outputStream, passwd);
       }
 
-      final KeyStore inStore = KeyStore.getInstance(KEYSTORE_TYPE);
+      final KeyStore inStore = KeyStore.getInstance(Constants.KEYSTORE_TYPE);
       inStore.load(new FileInputStream(file), passwd);
       return inStore;
     } catch (final Exception e) {
@@ -102,7 +94,7 @@ public class BouncyCastleKeystoreFactory implements KeystoreFactory {
         new JcaX509v3CertificateBuilder(issuer, serial, before, 
             after, issuer, keyPair.getPublic());
 
-    final ContentSigner signer = new JcaContentSignerBuilder(SIGNATURE_ALGORITHM)
+    final ContentSigner signer = new JcaContentSignerBuilder(Constants.SIGNATURE_ALGORITHM)
         .build(keyPair.getPrivate());
 
     final X509CertificateHolder certHolder = certificateBuilder.build(signer);
