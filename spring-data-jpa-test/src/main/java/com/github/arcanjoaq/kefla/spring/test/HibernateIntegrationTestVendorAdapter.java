@@ -31,7 +31,8 @@ public class HibernateIntegrationTestVendorAdapter implements IntegrationTestVen
   @Value("${hibernate.temp.use_jdbc_metadata_defaults:false}") 
   private boolean useJdbcMetadataDefaults;
 
-  private Logger logger = LoggerFactory.getLogger(HibernateIntegrationTestVendorAdapter.class);
+  private final Logger logger = LoggerFactory
+      .getLogger(HibernateIntegrationTestVendorAdapter.class);
   
   @Override
   public JpaVendorAdapter getVendorAdapter() {

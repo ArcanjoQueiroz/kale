@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class OutputStreamPdfConverter implements PdfConverter {
 
-  private Logger logger = LoggerFactory.getLogger(OutputStreamPdfConverter.class);
+  private final Logger logger = LoggerFactory.getLogger(OutputStreamPdfConverter.class);
 
   @Override
   public File convertAsync(final File source) {

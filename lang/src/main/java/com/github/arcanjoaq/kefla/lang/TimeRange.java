@@ -38,14 +38,14 @@ public class TimeRange implements Serializable {
     
     final LocalDateTime startDateTime = LocalDate.now().atTime(startTime);
     
-    LocalDateTime endDateTime = null;
+    LocalDateTime endDateTime;
     if (endTime.isBefore(startTime)) {
       endDateTime = LocalDate.now().plusDays(1).atTime(endTime);  
     } else {
       endDateTime = LocalDate.now().atTime(endTime);
     }    
     
-    boolean isBetween = false;
+    boolean isBetween;
     if (startTime.isBefore(endTime)) {
       isBetween = betweenDateTime.isAfter(startDateTime) 
           && betweenDateTime.isBefore(endDateTime);

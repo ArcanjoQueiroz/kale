@@ -19,9 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ZipExtractor {
-  private Path zip;
+  private final Path zip;
 
-  private Logger logger = LoggerFactory.getLogger(ZipExtractor.class);
+  private final Logger logger = LoggerFactory.getLogger(ZipExtractor.class);
 
   private static final int BUFFER_SIZE = 4096;
 
@@ -40,7 +40,7 @@ public class ZipExtractor {
     try (ZipInputStream is =
         new ZipInputStream(new BufferedInputStream(new FileInputStream(zip.toFile())))) {
       logger.debug("Extracting '{}' zip file", this.zip.toFile().getName());
-      ZipEntry entry = null;
+      ZipEntry entry;
       while ((entry = is.getNextEntry()) != null) {
         final Path output = path.resolve(entry.getName());
         if (!exists(output)) {
@@ -61,7 +61,7 @@ public class ZipExtractor {
 
   private void extractFile(final InputStream inputStream, final FileOutputStream outputStream)
       throws IOException {
-    int count = -1;
+    int count;
     byte[] buffer = new byte[BUFFER_SIZE];
     try (BufferedOutputStream out = new BufferedOutputStream(outputStream, BUFFER_SIZE)) {
       while ((count = inputStream.read(buffer, 0, BUFFER_SIZE)) != -1) {

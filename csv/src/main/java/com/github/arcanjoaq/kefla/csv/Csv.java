@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.opencsv.CSVWriterBuilder;
 import com.opencsv.ICSVWriter;
 import java.io.Closeable;
@@ -21,9 +22,9 @@ public class Csv implements Closeable {
 
   private ICSVWriter writer;
 
-  private char separator = ';';
+  private final char separator = ';';
 
-  private Map<Integer, Function<Object, Object>> converters = new HashMap<>();
+  private final Map<Integer, Function<Object, Object>> converters = new HashMap<>();
 
   private boolean closed;
 
@@ -82,7 +83,7 @@ public class Csv implements Closeable {
       field = "";
     } else if (field instanceof Iterable) {
       field = Joiner.on(",").skipNulls().join(((Iterable<?>) field));
-    } else if (field.toString().trim().isEmpty()) {
+    } else if (Strings.isNullOrEmpty(field.toString().trim())) {
       field = "";
     }
     return field.toString();

@@ -15,7 +15,7 @@ import com.google.common.io.ByteSource;
 
 public class ResponseEntityFactory {
 
-  private static final Logger logger = LoggerFactory.getLogger(ResponseEntityFactory.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ResponseEntityFactory.class);
  
   private ResponseEntityFactory() { }
   
@@ -41,7 +41,7 @@ public class ResponseEntityFactory {
     headers.add("Content-Disposition", String.format("inline; filename=%s", fileName));
     final ResponseEntity.BodyBuilder bodyBuilder =
         ResponseEntity.ok().headers(headers);
-    logger.debug("Returning response file {}", fileName);
+    LOGGER.debug("Returning response file {}", fileName);
     return (inputStream != null)
         ? bodyBuilder.body(new InputStreamResource(inputStream))
         : bodyBuilder.build();

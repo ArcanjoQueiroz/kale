@@ -8,9 +8,9 @@ import org.hibernate.jpa.HibernatePersistenceProvider;
 
 class ContainerEntityManagerFactory {
 
-  private DataSource dataSource;
-  private PersistenceUnitProperties persistenceUnitProperties;
-  private List<Class<?>> managedClasses;
+  private final DataSource dataSource;
+  private final PersistenceUnitProperties persistenceUnitProperties;
+  private final List<Class<?>> managedClasses;
 
   public ContainerEntityManagerFactory(final DataSource dataSource, 
       final PersistenceUnitProperties persistenceUnitProperties, 

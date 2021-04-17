@@ -23,10 +23,10 @@ public class XlsWriter implements Closeable {
   private boolean autoSize;
   private Workbook workbook;
   private Sheet sheet;
-  private OutputStream outputStream;
+  private final OutputStream outputStream;
   private int rowNumber;
 
-  private Logger logger = LoggerFactory.getLogger(XlsWriter.class);
+  private final Logger logger = LoggerFactory.getLogger(XlsWriter.class);
 
   public XlsWriter(final OutputStream outputStream, final Format format) {
     this(outputStream, format, null);
@@ -65,7 +65,7 @@ public class XlsWriter implements Closeable {
             for (final Object cell : cells) {
               createCell(workbook, ro, cellNumber, cell);
               logger.debug(
-                  "Writing '{}' value into cell", cell.getClass().getSimpleName(), cellNumber);
+                  "Writing '{}' value into cell {}", cell.getClass().getSimpleName(), cellNumber);
               cellNumber++;
             }
             if (cellNumber > lastColumnNumber) {

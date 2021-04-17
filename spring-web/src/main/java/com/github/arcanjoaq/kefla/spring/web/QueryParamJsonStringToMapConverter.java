@@ -14,9 +14,9 @@ import com.google.common.base.Strings;
 
 public class QueryParamJsonStringToMapConverter implements Converter<String, Map<String, Object>> {
 
-  private Logger logger = LoggerFactory.getLogger(QueryParamJsonStringToMapConverter.class);
+  private final Logger logger = LoggerFactory.getLogger(QueryParamJsonStringToMapConverter.class);
 
-  private ObjectMapper objectMapper;
+  private final ObjectMapper objectMapper;
 
   public QueryParamJsonStringToMapConverter(final ObjectMapper objectMapper) {
     this.objectMapper = objectMapper;

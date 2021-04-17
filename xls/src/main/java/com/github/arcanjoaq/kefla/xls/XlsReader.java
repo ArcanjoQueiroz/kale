@@ -27,7 +27,7 @@ public class XlsReader {
   private Path path;
   private String sheetName;
 
-  private Logger logger = LoggerFactory.getLogger(XlsReader.class);
+  private final Logger logger = LoggerFactory.getLogger(XlsReader.class);
 
   public XlsReader(final Path path) {
     setPath(path);

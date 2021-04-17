@@ -26,13 +26,13 @@ import org.slf4j.LoggerFactory;
 
 public class MailSender {
 
-  private String email;
-  private String username;
-  private String password;
-  private Properties properties;
-  private Charset charset;
+  private final String email;
+  private final String username;
+  private final String password;
+  private final Properties properties;
+  private final Charset charset;
 
-  private Logger logger = LoggerFactory.getLogger(MailSender.class);
+  private final Logger logger = LoggerFactory.getLogger(MailSender.class);
 
   public MailSender(
       final String email,
