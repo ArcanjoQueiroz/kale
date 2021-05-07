@@ -18,13 +18,19 @@ import com.icegreen.greenmail.util.ServerSetup;
 
 public class MailSenderTest {
 
+  private static final String PROTOCOL = "smtp";
+
+  private static final String HOST = "localhost";
+
+  private static final int PORT = 8345;
+
   private static GreenMail greenMail;
 
   private MailSender sender;
 
   @BeforeClass
   public static void setUpBeforeClass() {
-    final ServerSetup setup = new ServerSetup(8345, "localhost", "smtp");
+    final ServerSetup setup = new ServerSetup(PORT, HOST, PROTOCOL);
 
     greenMail =
         new GreenMail(setup)
@@ -34,12 +40,16 @@ public class MailSenderTest {
 
   @Before
   public void setUp() throws Exception {
-    final Properties props = new Properties();
-    props.put("mail.smtp.auth", "true");
-    props.put("mail.smtp.starttls.enable", "true");
-    props.put("mail.smtp.host", "localhost");
-    props.put("mail.smtp.port", "8345");
-
+    final Properties props = new MailPropertiesBuilder()
+        .auth(true)
+        .starttls(true)
+        .host(HOST)
+        .port(PORT)
+        .protocol(PROTOCOL)
+        .protocols("TLSv1.2")
+        .timeout(5000)
+        .debug(true)
+        .build();
     sender = new MailSender("foo@foo.com", "foo", "foo", props, Charset.forName("UTF-8"));
   }
 
